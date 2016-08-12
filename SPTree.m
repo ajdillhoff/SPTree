@@ -162,7 +162,7 @@ classdef SPTree < handle
             while ~isempty(Q)
                 current_node_idx = Q{end}{1};
                 current_data_idxs = Q{end}{2}';
-                current_dim_idxs = Q{end}{3}
+                current_dim_idxs = Q{end}{3};
                 current_depth = Q{end}{4};
                 current_seq_idx = Q{end}{5};
                 current_edge_idx = Q{end}{6};
@@ -181,7 +181,7 @@ classdef SPTree < handle
 
                 % Get optimal static edge node dimension
                 current_edge(3) = 1;
-                [d_stat, gam_stat] = find_best_split(X_cur, Y_cur, W_cur, current_seq_idx, current_dim_idxs)
+                [d_stat, gam_stat] = find_best_split(X_cur, Y_cur, W_cur, current_seq_idx, current_dim_idxs);
                 [stat_pos_idxs, stat_neg_idxs] = split_set(X_cur, current_seq_idx, d_stat);
 
                 % Get optimal sequential edge node dimension
@@ -230,10 +230,31 @@ classdef SPTree < handle
 
                     % Set Queue
                     if ~isempty(current_dim_idxs)
-                        Q{end + 1} = {K_idx, X_cur_pos_idxs, current_dim_idxs, current_depth, current_seq_idx, K_edge_idx}
+                        Q{end + 1} = {K_idx, X_cur_pos_idxs, current_dim_idxs, current_depth, current_seq_idx, K_edge_idx};
                         Q{end + 1} = {L_idx, X_cur_neg_idxs, current_dim_idxs, current_depth, current_seq_idx, L_edge_idx};
                     end
                 end
+            end
+        end
+
+        function result = SPBoost(obj, data, labels, num_trees)
+            %%
+            % SPBoost(data, labels, num_trees)
+            %
+            % Boosting algorithm to train a strong classifier from many weak 
+            % classifiers. Returns a strong classifier.
+            %%
+
+            % Initialize weights
+            num_samples = size(data, 1);
+            W = ones(num_samples) ./ num_samples;
+
+            for t = 1 : num_trees
+                % Select best weak learner using SPLearn
+                % Obtain classification error
+                % Obtain the weight
+                % Update weights
+                % Normalize weights
             end
         end
     end

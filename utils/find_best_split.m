@@ -13,6 +13,10 @@ function [dim, best_gamma] = find_best_split(data, labels, weights, seq_idx, dim
     best_gamma = intmax;
     dim = -1;
 
+    if seq_idx > size(data, 2)
+        return
+    end
+
     for i = 1 : length(dim_idxs)
         dim_idx = dim_idxs(i);
 

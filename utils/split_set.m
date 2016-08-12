@@ -11,6 +11,13 @@ function [X_pos_ind, X_neg_ind] = split_set(X, l, d)
     % `X_pos` will contain all samples such that the feature at dimension `d` is
     % 1. The set `X_neg` will contain the rest.
     %%
+    
+    X_pos_ind = [];
+    X_neg_ind = [];
+
+    if d == -1
+        return
+    end
 
     [X_pos_row, X_pos_col] = ind2sub(size(X), find(X(:, l, d) == 1));
 
