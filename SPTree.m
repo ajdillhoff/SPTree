@@ -236,26 +236,5 @@ classdef SPTree < handle
                 end
             end
         end
-
-        function result = SPBoost(obj, data, labels, num_trees)
-            %%
-            % SPBoost(data, labels, num_trees)
-            %
-            % Boosting algorithm to train a strong classifier from many weak 
-            % classifiers. Returns a strong classifier.
-            %%
-
-            % Initialize weights
-            num_samples = size(data, 1);
-            W = ones(num_samples) ./ num_samples;
-
-            for t = 1 : num_trees
-                % Select best weak learner using SPLearn
-                % Obtain classification error
-                % Obtain the weight
-                % Update weights
-                % Normalize weights
-            end
-        end
     end
 end
