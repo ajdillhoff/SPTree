@@ -10,37 +10,45 @@ function result = spboost(learners, data, labels)
     num_trees = length(learners);
 
     % Initialize weights
-    num_samples = size(data, 1);
-    W = ones(num_samples, 1) ./ num_samples;
+    num_samples = numel(data);
+    W = ones(num_samples, 1) / num_samples;
     
     % Initialize defaults
-    err_best = intmax;
-    C = max(labels);
+    C = numel(unique(labels));
     alpha = ones(num_trees, 1);
 
     for t = 1 : num_trees
+        % DEBUG
+        fprintf('\nLearner %d\n', t);
+
         h = learners{t};
 
         % Select best weak learner using SPLearn
         h.SPLearn(data, labels, W);
-        
+
+        % DEBUG
+        fprintf('Calculating error\n');
+
         % Obtain classification error
-        [V, err] = eval_learner(h, data, labels);
+        [V, err] = eval_learner(h, data, labels, W);
+
+        % DEBUG
+        fprintf('err %f\n', err);
 
         learners{t} = h;
 
-        if err < err_best
-            err_best = err
-        end
-
         % Obtain the weight
-        alpha(t) = log((1 - err_best) / err_best);
+        alpha(t) = log((1 - err) / err) + log(C - 1);
+        %alpha(t) = log((1 - err) / err);
+
+        % DEBUG
+        fprintf('alpha %f\n', alpha(t));
 
         % Update weights
-        W = W .* exp(-alpha(t) * err);
+        W = W .* exp(-alpha(t) * V);
 
         % Normalize weights
-        W = W ./ num_samples;
+        W = W / sum(W);
     end
 
     result = learners;

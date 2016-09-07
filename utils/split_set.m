@@ -3,13 +3,13 @@
 % Alex Dillhoff
 %%
 
-function [X_pos_ind, X_neg_ind] = split_set(X, l, d)
+function [X_pos_ind, X_neg_ind] = split_set(X, d)
     %%
-    % split_set(X, l, d)
+    % split_set(X, d)
     %
-    % Splits the dataset given the dimension d and the sequence index l. The set
-    % `X_pos` will contain all samples such that the feature at dimension `d` is
-    % 1. The set `X_neg` will contain the rest.
+    % Splits the dataset given the dimension d. The set `X_pos` will contain all 
+    % samples such that the feature at dimension `d` is 1. The set `X_neg` will 
+    % contain the rest.
     %%
     
     X_pos_ind = [];
@@ -19,11 +19,13 @@ function [X_pos_ind, X_neg_ind] = split_set(X, l, d)
         return
     end
 
-    [X_pos_row, X_pos_col] = ind2sub(size(X), find(X(:, l, d) == 1));
+    %[X_pos_row, X_pos_col] = ind2sub(size(X), find(X(:, l, d) == 1));
 
-    X_pos_ind = unique(X_pos_row);
-    X_neg_ind = find(~ismember(1:size(X, 1), X_pos_row));
+    index = false(1, numel(X));
+    for k = 1 : numel(X)
+        index(k) = ~isempty(find(X{k}(:, d)));
+    end
 
-    %X_pos = X(X_pos_row, :, :);
-    %X_neg = X(X_neg_row, :, :);
+    X_pos_ind = find(index);
+    X_neg_ind = find(~index);
 end

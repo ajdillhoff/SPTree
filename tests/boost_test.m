@@ -5,9 +5,11 @@
 % Tests the boosting algorithm for SPTree learning.
 %%
 
-create_dummy_set;
+%create_dummy_set;
+% Use some DGS40 data
+[X, Y] = parse_feature_vector('A1.txt');
 
-M = 5;
+M = 200;
 learners = {};
 
 % Initialize learners

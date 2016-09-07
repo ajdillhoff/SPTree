@@ -3,9 +3,9 @@
 % Alex Dillhoff
 %%
 
-function [dim, best_gamma] = find_best_split(data, labels, weights, seq_idx, dim_idxs)
+function [dim, best_gamma] = find_best_split(data, labels, weights, dim_idxs)
     %%
-    % find_best_split(data, labels, weights, seq_idx, dim_idxs)
+    % find_best_split(data, labels, weights, dim_idxs)
     %
     % Find the best split based on an adapted Gini impurity criteria.
     %%
@@ -13,14 +13,10 @@ function [dim, best_gamma] = find_best_split(data, labels, weights, seq_idx, dim
     best_gamma = intmax;
     dim = -1;
 
-    if seq_idx > size(data, 2)
-        return
-    end
-
     for i = 1 : length(dim_idxs)
         dim_idx = dim_idxs(i);
 
-        [pos_ind, neg_ind] = split_set(data, seq_idx, dim_idx);
+        [pos_ind, neg_ind] = split_set(data, dim_idx);
         Y_pos = labels(pos_ind);
         Y_neg = labels(neg_ind);
         W_pos = weights(pos_ind);
