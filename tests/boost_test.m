@@ -9,7 +9,7 @@
 % Use some DGS40 data
 [X, Y] = parse_feature_vector('A1.txt');
 
-M = 200;
+M = 20;
 learners = {};
 
 % Initialize learners
@@ -18,5 +18,8 @@ for i = 1:M
 end
 
 % Apply boosting
-learners = spboost(learners, X, Y);
+[alphas, learners] = spboost(learners, X, Y);
+
+% Evaluate
+o = eval_learners(learners, X, Y, alphas);
 

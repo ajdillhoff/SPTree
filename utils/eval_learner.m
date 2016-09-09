@@ -9,14 +9,24 @@ function [responses, err] = eval_learner(learner, data, labels, W)
     %
     % Evaluates the classification error of a given learner.
     %%
+    
+    K = numel(unique(labels));
 
     % Evaluate on the training set
     responses = zeros(numel(data), 1);
     for i = 1 : numel(data)
         p = learner.SPTPath(data{i});
         label = p{end}.Label;
-        responses(i) = label ~= labels(i);
+        response = label ~= labels(i);
+        %responses(i) = (label ~= labels(i));
+
+        %DEBUG
+        if response == 0
+            response = -1 / (K - 1);
+        end
+
+        responses(i) = W(i) * response;
     end
 
-    err = sum(W .* responses) / sum(W);
+    err = sum(responses) / sum(W);
 end

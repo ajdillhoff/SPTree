@@ -1,5 +1,5 @@
 
-function result = spboost(learners, data, labels)
+function [alpha, result] = spboost(learners, data, labels)
     %%
     % spboost(learners, data, labels)
     %
@@ -18,13 +18,15 @@ function result = spboost(learners, data, labels)
     alpha = ones(num_trees, 1);
 
     for t = 1 : num_trees
+        idxs = randperm(num_samples);
+        tic;
         % DEBUG
         fprintf('\nLearner %d\n', t);
 
         h = learners{t};
 
         % Select best weak learner using SPLearn
-        h.SPLearn(data, labels, W);
+        h.SPLearn(data(idxs), labels(idxs), W(idxs));
 
         % DEBUG
         fprintf('Calculating error\n');
@@ -37,18 +39,18 @@ function result = spboost(learners, data, labels)
 
         learners{t} = h;
 
-        % Obtain the weight
-        alpha(t) = log((1 - err) / err) + log(C - 1);
-        %alpha(t) = log((1 - err) / err);
+        % Obtain the weight -- add eps to stabilize
+        alpha(t) = log((1 - err + eps) / (err + eps)) + log(C - 1);
 
         % DEBUG
         fprintf('alpha %f\n', alpha(t));
 
         % Update weights
-        W = W .* exp(-alpha(t) * V);
+        W = W .* exp(alpha(t) * V);
 
         % Normalize weights
         W = W / sum(W);
+        fprintf('Time Taken: %f\n', toc);
     end
 
     result = learners;
