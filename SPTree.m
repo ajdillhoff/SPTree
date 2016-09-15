@@ -70,6 +70,7 @@ classdef SPTree < handle
             %%
 
             if isempty(obj.Root)
+                fprintf('WARNING: Root is empty.\n');
                 return;
             end
 
@@ -93,11 +94,13 @@ classdef SPTree < handle
                 if isempty(G)
                     % Traverse the negative decision edge
                     e_idx = find(obj.Edges(:, 1) == node_idx & obj.Edges(:, 4) == -1);
+                    assert(~isempty(e_idx), 'ERROR: e_idx does not exist.\n');
                     node_idx = obj.Edges(e_idx, 2);
                     current_node = obj.Nodes{node_idx};
                 else
                     % Traverse the positive decision edge
                     e_idx = find(obj.Edges(:, 1) == node_idx & obj.Edges(:, 4) == 1);
+                    assert(~isempty(e_idx), 'ERROR: e_idx does not exist.\n');
                     node_idx = obj.Edges(e_idx, 2);
                     edge_type = obj.Edges(e_idx, 3);
                     current_node = obj.Nodes{node_idx};
@@ -186,13 +189,13 @@ classdef SPTree < handle
                 W_cur = weights(current_data_idxs);
                 Y_cur = labels(current_data_idxs);
 
+                % TODO: Verify that find_best_split is functioning properly.
+
                 % Get optimal static edge node dimension
-                current_edge(3) = 1;
                 [d_stat, gam_stat] = find_best_split(X_cur, Y_cur, W_cur, current_dim_idxs);
                 [stat_pos_idxs, stat_neg_idxs] = split_set(X_cur, d_stat);
 
                 % Get optimal sequential edge node dimension
-                current_edge(3) = 2;
                 [d_seq, gam_seq] = find_best_split(X_cur, Y_cur, W_cur, dim_idxs);
                 [seq_pos_idxs, seq_neg_idxs] = split_set(X_cur, d_seq);
 
@@ -214,7 +217,7 @@ classdef SPTree < handle
                     current_node.Label = current_c;
                     current_node.Feature = d_seq;
                     current_edge(3) = 2;
-                    current_dim_idxs = setdiff(current_dim_idxs, d_seq);
+                    current_dim_idxs = dim_idxs;
                     
                     % Set current splits
                     X_cur_pos_idxs = seq_pos_idxs;
@@ -238,6 +241,11 @@ classdef SPTree < handle
                     if ~isempty(current_dim_idxs)
                         Q{end + 1} = {K_idx, X_cur_pos_idxs, current_dim_idxs, current_depth + 1, K_edge_idx};
                         Q{end + 1} = {L_idx, X_cur_neg_idxs, current_dim_idxs, current_depth + 1, L_edge_idx};
+                    end
+                else
+                    %assert(current_node.IsLeaf, 'ERROR: current_node should be a leaf.');
+                    if ~current_node.IsLeaf
+                        current_node.IsLeaf = true;
                     end
                 end
 

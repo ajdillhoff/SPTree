@@ -29,7 +29,7 @@ function result = calculate_split_criteria(W_pos, W_neg, Y_pos, Y_neg)
         F_neg = 1;
     end
 
-    C = sum(F_pos) + sum(F_neg);
+    %C = sum(F_pos) + sum(F_neg);
     %F_pos = F_pos / C;
     %F_neg = F_neg / C;
     F_pos = F_pos / sum(F_pos);
