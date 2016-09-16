@@ -23,6 +23,9 @@ function [responses, accuracy] = eval_learners(learners, data, labels, alphas)
             learner = learners{j};
             p = learner.SPTPath(data{i});
             label = p{end}.Label;
+            if label == -1
+                label = p{end - 1}.Label;
+            end
             pred = label_map(label);
             pred_vec(j, pred) = alphas(j);
         end

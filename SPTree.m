@@ -84,7 +84,7 @@ classdef SPTree < handle
             current_edge = 1;
             result = {obj.Root};
 
-            while ~current_node.IsLeaf
+            while ~current_node.IsLeaf & current_node.Feature ~= -1
                 d = current_node.Feature;
 
                 % Build G, which is a set of the indices that are 1 in the feature
@@ -152,19 +152,21 @@ classdef SPTree < handle
             root_node = SPNode(c, d);
             obj.AddNode(root_node);
 
-            L = SPNode(-1, -1, false);
-            M = SPNode(-1, -1, false);
+            L = SPNode(-1, -1, true);
+            M = SPNode(-1, -1, true);
             L_idx = obj.AddNode(L);
             M_idx = obj.AddNode(M);
             
             L_edge_idx = obj.AddEdge(1, 2, -1, -1);
             M_edge_idx = obj.AddEdge(1, 3, -1, 1);
 
-            dim_idxs = setdiff(dim_idxs, d);
+            current_dim_idxs = setdiff(dim_idxs, d);
 
             % Set Queue
-            Q = {{L_idx, pos_ind, dim_idxs, 2, L_edge_idx}, ...
-                {M_idx, neg_ind, dim_idxs, 2, M_edge_idx}};
+            %Q = {{L_idx, neg_ind, current_dim_idxs, 2, L_edge_idx}, ...
+            %    {M_idx, pos_ind, current_dim_idxs, 2, M_edge_idx}};
+            Q = {{M_idx, pos_ind, current_dim_idxs, 2, M_edge_idx}, ...
+                {L_idx, neg_ind, current_dim_idxs, 2, L_edge_idx}};
 
             while ~isempty(Q)
                 current_node_idx = Q{end}{1};
@@ -177,19 +179,14 @@ classdef SPTree < handle
                 Q = Q(1:end-1);
                  
                 if length(current_data_idxs) <= alpha | current_depth >= beta
-                    parent_node_idx = current_edge(1);
-                    parent_label = obj.Nodes{parent_node_idx}.Label;
-                    obj.Nodes{current_node_idx}.Label = parent_label;
-                    obj.Nodes{current_node_idx}.IsLeaf = true;
-                    continue;
+                    %break
+                    continue
                 end
 
                 % Get current data
                 X_cur = data(current_data_idxs);
                 W_cur = weights(current_data_idxs);
                 Y_cur = labels(current_data_idxs);
-
-                % TODO: Verify that find_best_split is functioning properly.
 
                 % Get optimal static edge node dimension
                 [d_stat, gam_stat] = find_best_split(X_cur, Y_cur, W_cur, current_dim_idxs);
@@ -211,8 +208,8 @@ classdef SPTree < handle
                     current_dim_idxs = setdiff(current_dim_idxs, d_stat);
                     
                     % Set current splits
-                    X_cur_pos_idxs = stat_pos_idxs;
-                    X_cur_neg_idxs = stat_neg_idxs;
+                    X_cur_pos_idxs = current_data_idxs(stat_pos_idxs);
+                    X_cur_neg_idxs = current_data_idxs(stat_neg_idxs);
                 else
                     current_node.Label = current_c;
                     current_node.Feature = d_seq;
@@ -220,8 +217,8 @@ classdef SPTree < handle
                     current_dim_idxs = dim_idxs;
                     
                     % Set current splits
-                    X_cur_pos_idxs = seq_pos_idxs;
-                    X_cur_neg_idxs = seq_neg_idxs;
+                    X_cur_pos_idxs = current_data_idxs(seq_pos_idxs);
+                    X_cur_neg_idxs = current_data_idxs(seq_neg_idxs);
                 end
 
                 % get parent node idx

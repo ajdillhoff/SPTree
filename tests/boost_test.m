@@ -9,7 +9,7 @@
 % Use some DGS40 data
 [X, Y] = parse_feature_vector('A1.txt');
 
-M = 25;     % number of learners
+M = 10;     % number of learners
 learners = {};
 
 % Initialize learners

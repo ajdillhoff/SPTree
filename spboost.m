@@ -21,7 +21,7 @@ function [alpha, result] = spboost(learners, data, labels)
     fprintf('Number of classes: %d\n', C);
 
     for t = 1 : num_trees
-        idxs = randperm(num_samples);
+        %idxs = randperm(num_samples);
         tic;
         % DEBUG
         fprintf('\nLearner %d\n', t);
@@ -29,7 +29,8 @@ function [alpha, result] = spboost(learners, data, labels)
         h = learners{t};
 
         % Select best weak learner using SPLearn
-        h.SPLearn(data(idxs), labels(idxs), W(idxs));
+        %h.SPLearn(data(idxs), labels(idxs), W(idxs));
+        h.SPLearn(data, labels, W);
 
         % DEBUG
         fprintf('Calculating error\n');
@@ -49,6 +50,7 @@ function [alpha, result] = spboost(learners, data, labels)
         fprintf('alpha %f\n', alpha(t));
 
         % Update weights
+        W_old = W;
         W = W .* exp(alpha(t) * V);
 
         % Normalize weights

@@ -18,6 +18,9 @@ function [responses, err] = eval_learner(learner, data, labels, W)
     for i = 1 : numel(data)
         p = learner.SPTPath(data{i});
         label = p{end}.Label;
+        if label == -1
+            label = p{end - 1}.Label;
+        end
         response = label ~= labels(i);
         %responses(i) = (label ~= labels(i));
 
@@ -30,5 +33,6 @@ function [responses, err] = eval_learner(learner, data, labels, W)
         weighted_responses(i) = W(i) * response;
     end
 
-    err = sum(weighted_responses) / sum(W);
+    %err = sum(weighted_responses) / sum(W);
+    err = sum(responses) / numel(data);
 end

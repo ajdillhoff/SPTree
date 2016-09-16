@@ -18,16 +18,16 @@ function result = calculate_split_criteria(W_pos, W_neg, Y_pos, Y_neg)
     Z_neg = sum(W_neg) / W_sum;
 
     % Calculate histogram of splits
-    [F_pos, ~] = hist(Y_pos, unique(Y_pos));
-    [F_neg, ~] = hist(Y_neg, unique(Y_neg));
+    [F_pos, ~] = hist(Y_pos, numel(unique(Y_pos)));
+    [F_neg, ~] = hist(Y_neg, numel(unique(Y_neg)));
 
-    if numel(unique(F_pos)) == 1
-        F_pos = 1;
-    end
+    %if numel(unique(F_pos)) == 1
+        %F_pos = 1;
+    %end
 
-    if numel(unique(F_neg)) == 1
-        F_neg = 1;
-    end
+    %if numel(unique(F_neg)) == 1
+        %F_neg = 1;
+    %end
 
     %C = sum(F_pos) + sum(F_neg);
     %F_pos = F_pos / C;
