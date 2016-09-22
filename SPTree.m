@@ -126,7 +126,7 @@ classdef SPTree < handle
 
             % TODO: Set these as properties
             alpha = 1;
-            beta = 30;
+            beta = 20;
 
             % data is a cell of matrices, each matrix is seq_length x num_features
             dim_idxs = 1:size(data{1}, 2);
@@ -178,8 +178,7 @@ classdef SPTree < handle
                 current_edge = obj.Edges(current_edge_idx, :);
                 Q = Q(1:end-1);
                  
-                if length(current_data_idxs) <= alpha | current_depth >= beta
-                    %break
+                if length(current_data_idxs) <= alpha || current_depth >= beta
                     continue
                 end
 

@@ -9,8 +9,6 @@ function [responses, err] = eval_learner(learner, data, labels, W)
     %
     % Evaluates the classification error of a given learner.
     %%
-    
-    K = numel(unique(labels));
 
     % Evaluate on the training set
     responses = zeros(numel(data), 1);
@@ -21,18 +19,12 @@ function [responses, err] = eval_learner(learner, data, labels, W)
         if label == -1
             label = p{end - 1}.Label;
         end
+        assert(label ~= -1, 'Error: Invalid label');
         response = label ~= labels(i);
-        %responses(i) = (label ~= labels(i));
-
-        %DEBUG
-        %if response == 0
-            %response = -1 / (K - 1);
-        %end
 
         responses(i) = response;
         weighted_responses(i) = W(i) * response;
     end
 
-    %err = sum(weighted_responses) / sum(W);
-    err = sum(responses) / numel(data);
+    err = sum(weighted_responses) / sum(W);
 end

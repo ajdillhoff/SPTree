@@ -5,11 +5,11 @@
 % Tests the boosting algorithm for SPTree learning.
 %%
 
-%create_dummy_set;
+create_dummy_set;
 % Use some DGS40 data
-[X, Y] = parse_feature_vector('A1.txt');
+%[X, Y] = parse_feature_vector('A_out.txt');
 
-M = 10;     % number of learners
+M = 5;     % number of learners
 learners = {};
 
 % Initialize learners
@@ -20,9 +20,9 @@ end
 % Apply boosting
 [alphas, learners] = spboost(learners, X, Y);
 
-%[X_test, Y_test] = parse_feature_vector('A1.txt');
+%[X_test, Y_test] = parse_feature_vector('A.txt');
 
 % Evaluate
-[responses, acc] = eval_learners(learners, X, Y, alphas);
+[responses, acc] = eval_learners(learners, X_test, Y_test, alphas);
 
-fprintf('Accuracy: %f\n', sum(acc) / numel(X));
+fprintf('Accuracy: %f\n', sum(acc) / numel(X_test));

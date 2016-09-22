@@ -58,12 +58,12 @@ function [alpha, result] = spboost(learners, data, labels)
         fprintf('Time Taken: %f\n', toc);
         
         % DEBUG: Evaluate
-        %[~, acc] = eval_learners(learners(1:t), data, labels, alpha(1:t));
-        %acc_array(t) = sum(acc) / num_samples;
+        [~, acc] = eval_learners(learners(1:t), data, labels, alpha(1:t));
+        acc_array(t) = sum(acc) / num_samples;
         
-        %figure(1);
-        %plot(1:t, acc_array(1:t));
-        %drawnow
+        figure(1);
+        plot(1:t, acc_array(1:t));
+        drawnow
     end
 
     result = learners;
